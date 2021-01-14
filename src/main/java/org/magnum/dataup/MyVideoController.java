@@ -17,19 +17,27 @@
  */
 package org.magnum.dataup;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.HttpStatus;
 import org.magnum.dataup.model.Video;
+import org.magnum.dataup.model.VideoStatus;
+import org.magnum.dataup.model.VideoStatus.VideoState;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 public class MyVideoController {
@@ -78,5 +86,19 @@ public class MyVideoController {
 		return save(v);
   	}
  	
+ 	// Controller method that saved binary data of video to specific video that added before.
+ 	@RequestMapping(value = "/video/{Id}/data", method = RequestMethod.POST)
+  	public @ResponseBody VideoStatus setVideoData(@PathVariable("Id") long id, @RequestParam("data") MultipartFile videoData, HttpServletResponse response) throws IOException {
+  		Video v = videos.get(id);
+		VideoStatus status = new VideoStatus(VideoState.READY);
+		if(v == null) {
+			response.setStatus(HttpStatus.SC_NOT_FOUND);
+			return status;
+		}
+		
+		VideoFileManager videoDataMgr = VideoFileManager.get();
+		videoDataMgr.saveVideoData(v, videoData.getInputStream());
+  		return status;
+  	}
  	
 }
