@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.magnum.dataup.model.Video;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -65,11 +66,17 @@ public class MyVideoController {
 		return base;
 	}
 	
-	// Controller for Get all videos saved in app.
+	// Controller method for Get all videos saved in app.
   	@RequestMapping(value = "/video", method = RequestMethod.GET)
   	public @ResponseBody Collection<Video> getVideoList(){
 		return videos.values();
   	}
   	
-  	
+  	// Controller method that add new video to list of videos. 
+ 	@RequestMapping(value = "/video", method = RequestMethod.POST)
+  	public @ResponseBody Video addVideo(@RequestBody Video v) {
+		return save(v);
+  	}
+ 	
+ 	
 }
