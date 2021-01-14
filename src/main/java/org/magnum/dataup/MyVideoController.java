@@ -33,6 +33,21 @@ public class MyVideoController {
 	private static final AtomicLong currentId = new AtomicLong(0L);
 	private Map<Long, Video> videos = new HashMap<Long, Video>();
 	
+	// Added new videos with unique ID for each other.
+	public Video save(Video entity) {
+		checkAndSetId(entity);
+		entity.setDataUrl(getDataUrl(entity.getId()));
+		videos.put(entity.getId(), entity);
+		return entity;
+	}
+	
+	// prevent if the app save videos with ID = 0. 
+	private void checkAndSetId(Video entity) {
+		if(entity.getId() == 0) {
+			entity.setId(currentId.incrementAndGet());
+		}
+	}
+	
 	// return the complete URL for saved video in instruction such (http://localhost:8080/video/1/data)
 	private String getDataUrl(long videoId) {
 		String url = getUrlBaseForLocalServer() + "/video/" + videoId + "/data";
