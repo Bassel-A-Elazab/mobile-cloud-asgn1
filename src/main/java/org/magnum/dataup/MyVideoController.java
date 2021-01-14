@@ -18,6 +18,7 @@
 package org.magnum.dataup;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -101,4 +102,18 @@ public class MyVideoController {
   		return status;
   	}
  	
+ 	// Controller method that get the binary data of specific video that added before.
+  	@RequestMapping(value = "/video/{Id}/data", method = RequestMethod.GET)
+  	public @ResponseBody void getData(@PathVariable("Id") long id, HttpServletResponse response) throws IOException{
+  		Video v = videos.get(id);
+  		VideoFileManager videoDataMgr = VideoFileManager.get();
+  		OutputStream out = response.getOutputStream();
+  		try {
+  			videoDataMgr.copyVideoData(v, out);
+  		}catch(Exception e){
+  			response.setStatus(HttpStatus.SC_NOT_FOUND);
+  		}
+  	}
+  	
+  	
 }
