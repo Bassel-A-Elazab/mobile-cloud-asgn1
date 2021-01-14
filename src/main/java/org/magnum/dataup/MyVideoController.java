@@ -20,13 +20,25 @@ package org.magnum.dataup;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.magnum.dataup.model.Video;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Controller
 public class MyVideoController {
 
 	private static final AtomicLong currentId = new AtomicLong(0L);
 	private Map<Long, Video> videos = new HashMap<Long, Video>();
+	
+	// Return the base URl from local server (e.g http://localhost:8080)
+	private String getUrlBaseForLocalServer() {
+		HttpServletRequest request = ( (ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+		String base = "http://"+request.getServerName()
+						+ (( request.getServerPort() != 80) ? ":" + request.getServerPort() : "");
+		return base;
+	}
 	
 }
